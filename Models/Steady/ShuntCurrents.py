@@ -29,8 +29,18 @@ class shuntCurrent(steadyProblem):
         femProblem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
         # solve the system
         uh = femProblem.solve()
-        return uh
-    
+        return [uh, V]
+
+    def LinearShunt(self, u_test, bounds, idx):
+        Rch = self.problemData.Control.Rch
+        Rm = self.problemData.Control.Rm
+        r = 1
+        while r > 1e-6:
+            bcs = self.SetBounds(bounds)
+            [uh_, V] = self.SimpleShunt(bcs)
+            [bounds, r] = u_test(uh_, [Rch, Rm], V, bounds, idx)
+        return [uh_, V]
+
     def CellVoltage(self, Ic):
         # Define the problem
         As = self.problemData.Control.As # eletrode surface

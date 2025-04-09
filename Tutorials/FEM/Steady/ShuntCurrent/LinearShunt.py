@@ -1,14 +1,19 @@
 import numpy as np
 import sys 
 import os
-from time import time
 import matplotlib.pyplot as plt
+from time import time
 
 # add utilities
 path_to_kinetics = os.path.expanduser("~/StackSim/Utilities/Kinetics")
 path_to_fem = os.path.expanduser("~/StackSim/Models/Steady/")
+path_to_modules = os.path.expanduser("~/StackSim/Models/Steady/modules/")
+
 sys.path.append(os.path.abspath(path_to_kinetics))
 sys.path.append(os.path.abspath(path_to_fem))
+sys.path.append(os.path.abspath(path_to_modules))
+
+from shunt.linear.shuntConstraint import linear_u_test
 from ShuntCurrents import shuntCurrent
 from ButlerVolmer import ButlerVolmer
 
@@ -47,13 +52,12 @@ if __name__ == "__main__":
     problem_data = problemData(control, equilibrium, kinetics)
     
     # Create a simple test case
-    N = 300
+    N = 10
     problem = shuntCurrent(N, problem_data)
     # Initialize boundaries
     bounds = [0, 0]
-    bcs = problem.SetBounds(bounds)
     # Call the SimpleShunt method
-    [uh, V] = problem.SimpleShunt(bcs)
+    [uh, V] = problem.LinearShunt(linear_u_test, bounds, [1, 1])
     finish = time()
     # plot results
     plt.plot(problem.domain.geometry.x[:,0]+1, uh.x.array, "o-")
@@ -62,5 +66,4 @@ if __name__ == "__main__":
     plt.show()
 
     print("Finished")
-    print("Elapsed time: ", finish-start, "s")
-
+    print("Elapsed time: ", finish - start, "s")

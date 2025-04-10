@@ -20,7 +20,7 @@ from ButlerVolmer import ButlerVolmer
 class control:
     def __init__(self):
         # channel resistance
-        self.Rch = 5 # Ohm
+        self.Rch = 100 # Ohm
         # manifold resistance
         self.Rm = 0.1 # Ohm
         # contact resistance
@@ -29,6 +29,14 @@ class control:
         self.Iw = 100 # A
         # electrode surface area
         self.As = 1e4 # cm^2
+
+    def fnc_Rch(self, x, data):
+        # channel resistance as a function of x
+        return self.Rch + x*0.
+    
+    def fnc_Rm(self, x, data):
+        # channel resistance as a function of x
+        return self.Rm + x*0.
 
 class equilibrium:
     def __init__(self):
@@ -56,8 +64,11 @@ if __name__ == "__main__":
     problem = shuntCurrent(N, problem_data)
     # Initialize boundaries
     bounds = [0, 0]
+    # Define the functions
+    Fncs = [problem.problemData.Control.fnc_Rch, 
+            problem.problemData.Control.fnc_Rm]
     # Call the SimpleShunt method
-    [uh, V] = problem.LinearShunt(linear_u_test, bounds, [1, 1])
+    [uh, V] = problem.NonlinearShunt(linear_u_test, Fncs, bounds, [1, 1])
     finish = time()
     # plot results
     plt.plot(problem.domain.geometry.x[:,0]+1, uh.x.array, "o-")

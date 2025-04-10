@@ -31,7 +31,7 @@ class ButlerVolmer:
     def overpotential(self, j):
         # Calculate the overpotential given a current density
         func = lambda eta: ((j - self.j0 * (np.exp(eta / self.ba) - np.exp(-eta / self.bc)))*1e4)**2 # objective function
-        sz = len(j)
+        sz = len(j.T)
         eta_initial_guess = np.zeros(sz)
         eta_solution = fsolve(func, eta_initial_guess)
         return eta_solution

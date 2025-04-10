@@ -9,9 +9,9 @@ def linear_u_test(uh_, R, V, bounds, idx):
         
         if idx[i] > 0:
             if i == 0:
-                bounds_ = (uh_.x.array[1] + V) / (2 * Rch + Rm)    
+                bounds_ = (uh_.x.array[1] + V[0]) / (2 * Rch + Rm)    
             else:
-                bounds_ = (uh_.x.array[-2] + V) / (2 * Rch + Rm)
+                bounds_ = (uh_.x.array[-2] + V[-1]) / (2 * Rch + Rm)
 
             r += (bounds_ - bounds[i])**2
             bounds[i] = bounds_
